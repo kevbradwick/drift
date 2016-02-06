@@ -1,0 +1,10 @@
+{
+    "name": "kevinbradwick/php-data-mapper",
+    "authors": [
+        {
+            "name": "Kevin Bradwick",
+            "email": "kevinbradwick@gmail.com"
+        }
+    ],
+    "require": {}
+}
