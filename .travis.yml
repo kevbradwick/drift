@@ -8,4 +8,4 @@ php:
 before_script:
   - composer install
 
-script: phpunit --coverage-text -c test/phpunit.xml
+script: ./vendor/bin/phpunit --coverage-text -c test/phpunit.xml
