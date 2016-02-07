@@ -4,8 +4,14 @@ namespace Drift;
 
 class Mapper
 {
+    /**
+     * @var array
+     */
     private $data = [];
 
+    /**
+     * @var string
+     */
     private $className;
 
     public function __construct($className, array $data = [])
@@ -61,7 +67,6 @@ class Mapper
                     }
                 }
             }
-            print_r($properties);
         }
 
         return $instance;

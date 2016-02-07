@@ -1,0 +1,18 @@
+---
+fixtures\Movie:
+  title:
+    type: string
+    field: film_title
+
+  releaseDate:
+    type: date
+    field: release_date
+
+  rating:
+    type: string
+
+  cast:
+    type: array
+
+
+fixtures\Actor:
