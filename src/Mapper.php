@@ -3,6 +3,8 @@
 namespace Drift;
 
 use Drift\Reader\AbstractReader;
+use Drift\Types\DateType;
+use Drift\Types\StringType;
 
 class Mapper
 {
@@ -28,45 +30,46 @@ class Mapper
     }
 
     /**
+     * @param string $className the class to instantiate
      * @param array ...$args any number of constructor arguments
      * @return mixed
      */
-    public function instantiate(...$args)
+    public function instantiate($className, ...$args)
     {
-        $class = new \ReflectionClass($this->className);
+        $class = new \ReflectionClass($className);
         $instance = $class->newInstanceArgs($args);
-        $reflect = new \ReflectionClass($instance);
 
-        foreach ($reflect->getProperties() as $property) {
-            if ($property->isPublic() === false) {
-                $property->setAccessible(true);
+        foreach ($this->reader->getProperties($className) as $name => $config) {
+            try {
+                $property = $class->getProperty($name);
+            } catch (\ReflectionException $e) {
+                throw new \RuntimeException(sprintf(
+                    'Unable to read the property "%s" for class "%s"',
+                    $name,
+                    $className
+                ));
             }
 
-            $comment = $property->getDocComment();
-            preg_match(
-                '/Drift(?P<type>[a-z]+)\((?P<spec>.+?)?\)/i',
-                $comment,
-                $matches
-            );
+            $field = $config['field'] ? $config['field'] : $name;
 
-            // the type transformer class
-            $type = isset($matches['type']) ? $matches['type'] : null;
-            $properties = [];
-
-            if (isset($matches['spec'])) {
-                $parts = explode(' ', $matches['spec']);
-                foreach ($parts as $part) {
-                    var_dump($part);
-                    preg_match(
-                        '/^(?P<name>[a-z]+)\="?(?P<value>[a-z_\-]+)"?/i',
-                        trim($part),
-                        $matches
-                    );
-                    if (isset($matches['name']) && $matches['value']) {
-                        $properties[$matches['name']] = $matches['value'];
-                    }
-                }
+            if (!isset($this->data[$field])) {
+                continue;
             }
+
+            $originalValue = $this->data[$field];
+            $newValue = $originalValue;
+
+            switch ($config['type']) {
+                case 'string':
+                    $newValue = (new StringType($originalValue))->getValue();
+                    break;
+                case 'date':
+                    $newValue = (new DateType($originalValue))->getValue();
+                    break;
+            }
+
+            $property->setAccessible(true);
+            $property->setValue($instance, $newValue);
         }
 
         return $instance;

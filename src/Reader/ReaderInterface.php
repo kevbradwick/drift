@@ -4,5 +4,5 @@ namespace Drift\Reader;
 
 interface ReaderInterface
 {
-    public function getProperties();
+    public function getProperties($className);
 }
