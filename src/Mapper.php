@@ -2,6 +2,8 @@
 
 namespace Drift;
 
+use Drift\Reader\AbstractReader;
+
 class Mapper
 {
     /**
@@ -14,16 +16,14 @@ class Mapper
      */
     private $className;
 
-    public function __construct($className, array $data = [])
-    {
-        if (!class_exists($className)) {
-            throw new \InvalidArgumentException(sprintf(
-                'The class "%s" does not exist or is not on the include path',
-                $className
-            ));
-        }
+    /**
+     * @var AbstractReader
+     */
+    private $reader;
 
-        $this->className = $className;
+    public function __construct(AbstractReader $reader, array $data = [])
+    {
+        $this->reader = $reader;
         $this->data = $data;
     }
 
