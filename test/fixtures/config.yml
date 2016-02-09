@@ -7,6 +7,8 @@ fixtures\Movie:
   releaseDate:
     type: date
     field: release_date
+    options:
+      format: "Y-m-d H:i:s"
 
   rating:
     type: string

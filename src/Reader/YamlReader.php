@@ -40,6 +40,7 @@ class YamlReader extends AbstractReader
         $defaults = [
             'type' => null,
             'field' => null,
+            'options' => [],
         ];
 
         $config = array_map(function ($property) use ($defaults) {

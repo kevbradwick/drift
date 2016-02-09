@@ -14,11 +14,6 @@ class Mapper
     private $data = [];
 
     /**
-     * @var string
-     */
-    private $className;
-
-    /**
      * @var AbstractReader
      */
     private $reader;
