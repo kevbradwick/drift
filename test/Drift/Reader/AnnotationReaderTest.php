@@ -3,7 +3,6 @@
 namespace Test\Drift\Reader;
 
 use Drift\Reader\AnnotationReader;
-use Drift\Reader\ReaderException;
 use fixtures\Person;
 
 class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
@@ -35,9 +34,26 @@ class AnnotationReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testBasicProperty()
     {
-        $config = $this->reader->getProperties(Person::class)['firstName'];
+        $property = $this->reader->getProperties(Person::class)['firstName'];
 
-        $this->assertEquals('string', $config['type']);
-//        $this->assertEquals('firstName', $config['field']);
+        $this->assertEquals('String', $property['type']);
+        $this->assertEmpty($property['spec']);
+    }
+
+    public function testSingleLineStatement()
+    {
+        $property = $this->reader->getProperties(Person::class)['age'];
+
+        $this->assertEquals('Int', $property['type']);
+        $this->assertEquals('age', $property['spec']['field']);
+    }
+
+    public function testMultiLineStatement()
+    {
+        $property = $this->reader->getProperties(Person::class)['mother'];
+
+        $this->assertEquals('Entity', $property['type']);
+        $this->assertEquals('parent_mother', $property['spec']['field']);
+        $this->assertEquals(Person::class, $property['spec']['class']);
     }
 }

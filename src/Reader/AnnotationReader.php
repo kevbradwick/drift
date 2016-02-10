@@ -23,21 +23,27 @@ class AnnotationReader extends AbstractReader
 
         foreach ($class->getProperties() as $property) {
             preg_match(
-                '/Drift\\\(?P<type>\w+)\((?P<spec>.*?)\)/',
+                '/
+                Drift                   # Drift namespace
+                \\\                     # backslash, escaped
+                (?P<type>[a-zA-Z]+)     # the type class
+                \(                      # open parens (always)
+                (?P<spec>.+?)?          # optional type specification
+                \)                      # closing parens (always)
+                /xsm',
                 $property->getDocComment(),
                 $matches
             );
 
             if (isset($matches['type'])) {
-                $spec = [];
-                if (isset($matches['spec'])) {
-                    $spec = $this->parseSpec($matches['spec']);
-                }
-                $properties[$property->getName()] = [
-                    'type' => strtolower($matches['type']),
-                    'field' => isset($spec['field']) ? $spec['field'] : null,
-                    'options' => isset($spec['options']) ? $spec['options'] : [],
+                $prop = [
+                    'type' => $matches['type'],
+                    'spec' => [],
                 ];
+                if (isset($matches['spec'])) {
+                    $prop['spec'] = $this->parseSpec($matches['spec']);
+                }
+                $properties[$property->getName()] = $prop;
             }
         }
 
@@ -51,6 +57,17 @@ class AnnotationReader extends AbstractReader
     private function parseSpec($specString)
     {
         $spec = [];
+
+        preg_match_all(
+            '/(?P<name>\w+)="?(?P<value>[\w\\\\-]+)"?/',
+            $specString,
+            $matches,
+            \PREG_SET_ORDER
+        );
+
+        foreach ($matches as $match) {
+            $spec[$match['name']] = $match['value'];
+        }
 
         return $spec;
     }
