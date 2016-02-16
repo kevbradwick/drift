@@ -18,3 +18,9 @@ fixtures\Movie:
 
 
 fixtures\Actor:
+  name:
+    type: string
+
+  dateOfBirth:
+    type: date
+    field: date_of_birth

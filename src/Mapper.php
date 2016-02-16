@@ -21,6 +21,14 @@ class Mapper
     public function __construct(AbstractReader $reader, array $data = [])
     {
         $this->reader = $reader;
+        $this->setData($data);
+    }
+
+    /**
+     * @param array $data
+     */
+    public function setData(array $data)
+    {
         $this->data = $data;
     }
 

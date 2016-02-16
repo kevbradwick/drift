@@ -16,6 +16,17 @@ class DateType extends AbstractType
     {
         $original = $this->getOrginalValue();
 
+        if ($original instanceof \DateTime) {
+            return $original;
+        }
+
+        if (!is_string($original) && !is_int($original)) {
+            throw new TypeException(sprintf(
+                'Unable to convert type "%s" into DateTime',
+                gettype($original)
+            ));
+        }
+
         if (strlen($this->format) > 0) {
             return \DateTime::createFromFormat($this->format, $original);
         }

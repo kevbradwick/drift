@@ -29,7 +29,7 @@ class YamlReader extends AbstractReader
 
     public function getProperties($className)
     {
-        if (!isset($this->config[$className])) {
+        if (!array_key_exists($className, $this->config)) {
             throw new ReaderException(sprintf(
                 'The class "%s" is not defined in %s',
                 $className,
@@ -43,10 +43,20 @@ class YamlReader extends AbstractReader
             'options' => [],
         ];
 
-        $config = array_map(function ($property) use ($defaults) {
-            return array_replace($defaults, $property);
-        }, $this->config[$className]);
+        if (!is_array($this->config[$className])) {
+            $this->config[$className] = [];
+        }
 
-        return $config;
+        $properties = [];
+        foreach ($this->config[$className] as $name => $config) {
+            $properties[$name] = array_replace($defaults, $config);
+            // if no field name is present then use the name of the key used
+            // in the yaml structure
+            if (!$properties[$name]['field']) {
+                $properties[$name]['field'] = $name;
+            }
+        }
+
+        return $properties;
     }
 }

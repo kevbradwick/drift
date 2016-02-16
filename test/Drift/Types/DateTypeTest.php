@@ -3,6 +3,7 @@
 namespace Test\Drift\Types;
 
 use Drift\Types\DateType;
+use Drift\Types\TypeException;
 
 class DateTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -56,5 +57,37 @@ class DateTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($parts['month'], $date->format('m'));
         $this->assertEquals($parts['year'], $date->format('Y'));
         $this->assertEquals($parts['time'], $date->format('H:i:s'));
+    }
+
+    public function testDateTimeIsNotConverted()
+    {
+        $date = new \DateTime();
+        $type = new DateType($date);
+
+        $this->assertSame($date, $type->getValue());
+    }
+
+    public function exceptionDataProvider()
+    {
+        return [
+            [true],
+            [new \stdClass()],
+            [12.34],
+            [null],
+        ];
+    }
+
+    /**
+     * @dataProvider exceptionDataProvider
+     */
+    public function testExceptionThrownWhenTypeIsInvalid($value)
+    {
+        $this->expectException(TypeException::class);
+        $this->expectExceptionMessage(
+            'Unable to convert type "' . gettype($value) . '" into DateTime'
+        );
+
+        $type = new DateType($value);
+        $type->getValue();
     }
 }
