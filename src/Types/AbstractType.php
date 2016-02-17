@@ -11,8 +11,17 @@ abstract class AbstractType implements TypeInterface
         $this->originalValue = $value;
     }
 
-    protected function getOrginalValue()
+    protected function getOriginalValue()
     {
         return $this->originalValue;
+    }
+
+    protected function typeError($type)
+    {
+        throw new TypeException(sprintf(
+            'Unable to convert type "%s" into %s',
+            gettype($this->getOriginalValue()),
+            $type
+        ));
     }
 }

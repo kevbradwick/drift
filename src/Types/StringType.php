@@ -9,6 +9,6 @@ class StringType extends AbstractType
      */
     public function getValue()
     {
-        return (string) $this->getOrginalValue();
+        return (string) $this->getOriginalValue();
     }
 }

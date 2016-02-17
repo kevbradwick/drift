@@ -2,6 +2,11 @@
 
 namespace Drift\Types;
 
+/**
+ * Class DateType.
+ *
+ * @package Drift\Types
+ */
 class DateType extends AbstractType
 {
     /**
@@ -14,17 +19,14 @@ class DateType extends AbstractType
      */
     public function getValue()
     {
-        $original = $this->getOrginalValue();
+        $original = $this->getOriginalValue();
 
         if ($original instanceof \DateTime) {
             return $original;
         }
 
         if (!is_string($original) && !is_int($original)) {
-            throw new TypeException(sprintf(
-                'Unable to convert type "%s" into DateTime',
-                gettype($original)
-            ));
+            $this->typeError('DateTime');
         }
 
         if (strlen($this->format) > 0) {

@@ -9,6 +9,6 @@ class IntType extends AbstractType
      */
     public function getValue()
     {
-        return (int) $this->getOrginalValue();
+        return (int) $this->getOriginalValue();
     }
 }
