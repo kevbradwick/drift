@@ -5,6 +5,14 @@
         <testsuite name="All">
             <directory suffix="Test.php">Drift/</directory>
         </testsuite>
+
+        <!--
+        Skip the yaml tests on Travis as the Yaml extension is not loaded
+        -->
+        <testsuite name="Travis">
+            <directory suffix="Test.php">Drift/</directory>
+            <exclude>Drift/Reader/YamlReaderTest.php</exclude>
+        </testsuite>
     </testsuites>
 
     <filter>

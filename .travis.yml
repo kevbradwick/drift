@@ -8,15 +8,7 @@ php:
 install:
   - composer install
 
-before_install:
-  - pecl channel-update pecl.php.net
-  - (CFLAGS="-O1 -g3 -fno-strict-aliasing"; pecl install yaml < /dev/null &)
-
 script:
   - ./vendor/bin/phpcs --standard=PSR2 src/
-  - ./vendor/bin/phpunit --coverage-text -c test/phpunit.xml
+  - ./vendor/bin/phpunit --coverage-text -c test/phpunit.xml --testsuite=Travis
 
-addons:
-  apt:
-    packages:
-      - libyaml-dev
