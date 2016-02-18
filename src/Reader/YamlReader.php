@@ -4,10 +4,21 @@ namespace Drift\Reader;
 
 class YamlReader extends AbstractReader
 {
+    /**
+     * @var array|mixed
+     */
     private $config = [];
 
+    /**
+     * @var
+     */
     private $fileName;
 
+    /**
+     * YamlReader constructor.
+     * @param $fileName
+     * @throws ReaderException if file not found or yaml extension not loaded
+     */
     public function __construct($fileName)
     {
         if (!file_exists($fileName)) {
