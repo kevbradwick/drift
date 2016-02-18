@@ -9,7 +9,9 @@ install:
   - composer install
 
 before_script:
+  - printf "\n" | pecl install yaml-beta
   - echo "extension=yaml.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - cat ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 script:
   - ./vendor/bin/phpcs --standard=PSR2 src/
