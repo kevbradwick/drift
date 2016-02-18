@@ -8,6 +8,9 @@ php:
 install:
   - composer install
 
+before_script:
+  - echo "extension=yaml.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
 script:
   - ./vendor/bin/phpcs --standard=PSR2 src/
   - ./vendor/bin/phpunit --coverage-text -c test/phpunit.xml
