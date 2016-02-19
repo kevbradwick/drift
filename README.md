@@ -7,6 +7,12 @@ Drift
 
 Drift is a PHP library for mapping arbitrary data to PHP classes.
 
+### Installation
+
+This library is currently in development so you can install master with;
+
+    composer require kevbradwick/drift:dev-master
+
 ### Usage
 
 Say you have a class with private member variables like this;
