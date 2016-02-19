@@ -3,8 +3,10 @@
 namespace Drift;
 
 use Drift\Reader\AbstractReader;
+use Drift\Types\AbstractType;
 use Drift\Types\DateType;
 use Drift\Types\StringType;
+use Drift\Types\TypeException;
 
 class Mapper
 {
@@ -60,21 +62,47 @@ class Mapper
             }
 
             $originalValue = $this->data[$field];
-            $newValue = $originalValue;
-
-            switch ($config['type']) {
-                case 'string':
-                    $newValue = (new StringType($originalValue))->getValue();
-                    break;
-                case 'date':
-                    $newValue = (new DateType($originalValue))->getValue();
-                    break;
-            }
+            $newValue = $this->createTypeClass($config, $originalValue)->getValue();
 
             $property->setAccessible(true);
             $property->setValue($instance, $newValue);
         }
 
         return $instance;
+    }
+
+    /**
+     * @param array $config
+     * @param mixed $rawValue
+     * @return AbstractType
+     */
+    private function createTypeClass(array $config, $rawValue)
+    {
+        $class = '\Drift\Types\\' . ucfirst($config['type']) . 'Type';
+
+        if (!class_exists($class)) {
+            throw new TypeException(sprintf(
+                '"%s" is an unknown type specified for field "%s"',
+                $config['type'],
+                $config['field']
+            ));
+        }
+
+        $type = new $class($rawValue);
+
+        foreach ($config['options'] as $name => $value) {
+            $methodName = 'set' . ucfirst($name);
+            if (!method_exists($type, $methodName)) {
+                throw new TypeException(sprintf(
+                    'Unknown config "%s" specified for type "%s"',
+                    $name,
+                    $config['type']
+                ));
+            }
+
+            $type->{$methodName}($value);
+        }
+
+        return $type;
     }
 }
