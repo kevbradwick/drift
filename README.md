@@ -9,9 +9,9 @@ Drift is a PHP library for mapping arbitrary data to PHP classes.
 
 ### Installation
 
-This library is currently in development so you can install master with;
+Drift is available on [Packagist](https://packagist.org/packages/kevbradwick/drift), so you can use composer;
 
-    composer require kevbradwick/drift:dev-master
+    composer require kevbradwick/drift
 
 ### Usage
 
