@@ -81,4 +81,49 @@ class MapperTest extends \PHPUnit_Framework_TestCase
         $movie = $this->mapper->instantiate(Movie::class);
         $this->assertEquals(90, $movie->getDuration());
     }
+
+    /**
+     * @expectedException \Drift\Types\TypeException
+     * @expectedExceptionMessage "foo" is an unknown type specified for field "duration"
+     */
+    public function testExceptionThrownForUnknownType()
+    {
+        $this->reader->expects($this->once())
+            ->method('getProperties')
+            ->willReturn(['duration' => [
+                'field' => 'duration',
+                'type' => 'foo',
+                'options' => [],
+            ]]);
+
+        $this->mapper->setData(['duration' => 90]);
+
+        $this->mapper->instantiate(Movie::class);
+    }
+
+    /**
+     * @expectedException \Drift\Types\TypeException
+     * @expectedExceptionMessage Unknown config "foo" specified for type "int"
+     */
+    public function testExceptionForUnknownTypeOption()
+    {
+        $this->reader->expects($this->once())
+            ->method('getProperties')
+            ->willReturn(['duration' => [
+                'field' => 'duration',
+                'type' => 'int',
+                'options' => [
+                    'foo' => 'bar',
+                ],
+            ]]);
+
+        $this->mapper->setData(['duration' => 90]);
+
+        $this->mapper->instantiate(Movie::class);
+    }
+
+    public function testTypeOptionSetting()
+    {
+
+    }
 }
