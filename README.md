@@ -17,16 +17,18 @@ Drift is available on [Packagist](https://packagist.org/packages/kevbradwick/dri
 
 Say you have a class with private member variables like this;
 
-    namespace Application;
+```php
+namespace Application;
+
+class Actor
+{
+    private $name;
     
-    class Actor
-    {
-        private $name;
-        
-        private $age;
-        
-        private $dateOfBirth;
-    }
+    private $age;
+    
+    private $dateOfBirth;
+}
+```
     
 And you have some data, consumed from an API like this;
 
