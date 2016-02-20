@@ -78,12 +78,28 @@ class Mapper
      */
     private function createTypeClass(array $config, $rawValue)
     {
-        $class = '\Drift\Types\\' . ucfirst($config['type']) . 'Type';
+        $aliases = [
+            'Boolean' => ['bool', 'boolean'],
+            'Int' => ['int', 'integer'],
+            'String' => ['string', 'str'],
+            'Array' => ['array', 'list'],
+            'Date' => ['date',  'datetime'],
+            'Float' => ['float']
+        ];
 
-        if (!class_exists($class)) {
+        $type = strtolower($config['type']);
+        $class = null;
+
+        foreach ($aliases as $typeClass => $list) {
+            if (in_array($type, $list)) {
+                $class = '\Drift\Types\\' . $typeClass . 'Type';
+            }
+        }
+
+        if ($class === null || !class_exists($class)) {
             throw new TypeException(sprintf(
                 '"%s" is an unknown type specified for field "%s"',
-                $config['type'],
+                $type,
                 $config['field']
             ));
         }
