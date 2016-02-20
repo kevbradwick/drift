@@ -21,6 +21,11 @@
       "Drift\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "fixtures\\": "test/fixtures/"
+    }
+  },
   "require-dev": {
     "phpunit/phpunit": "~5.2.1",
     "squizlabs/php_codesniffer": "~2.5.1"

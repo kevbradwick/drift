@@ -26,4 +26,50 @@ class Movie
     private $rating;
 
     private $cast;
+
+    /**
+     * @Drift\Int()
+     * @var int
+     */
+    private $duration = 120;
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getReleaseDate()
+    {
+        return $this->releaseDate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRating()
+    {
+        return $this->rating;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCast()
+    {
+        return $this->cast;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDuration()
+    {
+        return $this->duration;
+    }
 }
