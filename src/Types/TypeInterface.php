@@ -2,6 +2,8 @@
 
 namespace Drift\Types;
 
+use Drift\Mapper;
+
 interface TypeInterface
 {
     /**
@@ -10,4 +12,10 @@ interface TypeInterface
      * @return mixed
      */
     public function getValue();
+
+    /**
+     * @param Mapper $mapper
+     * @return mixed
+     */
+    public function setMapper(Mapper $mapper);
 }

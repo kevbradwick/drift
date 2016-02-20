@@ -4,6 +4,8 @@ namespace Test\Drift;
 
 use fixtures\Car;
 use fixtures\Movie;
+use fixtures\CustomType1;
+use fixtures\CustomType2;
 use Drift\Mapper;
 use Drift\Reader\AnnotationReader;
 
@@ -122,8 +124,30 @@ class MapperTest extends \PHPUnit_Framework_TestCase
         $this->mapper->instantiate(Movie::class);
     }
 
-    public function testTypeOptionSetting()
+    /**
+     * @expectedException \Drift\Types\TypeException
+     * @expectedExceptionMessage Cannot register type, class "foo" does not exist
+     */
+    public function testRegisterTypeExceptionForClassNotExist()
     {
-        $this->markTestIncomplete('');
+        $this->mapper->registerType('foo', 'foo');
+    }
+
+    /**
+     * @expectedException \Drift\Types\TypeException
+     * @expectedExceptionMessageRegExp /^The class "fixtures\\CustomType1" does not implement/
+     */
+    public function testRegisterTypeExceptionWhenClassNotImplementsInterface()
+    {
+        $this->mapper->registerType(CustomType1::class, 'foo');
+    }
+
+    /**
+     * @expectedException \Drift\Types\TypeException
+     * @expectedExceptionMessage The name "string" is already registered
+     */
+    public function testRegisterTypeExceptionWhenDuplicateName()
+    {
+        $this->mapper->registerType(CustomType2::class, 'string');
     }
 }

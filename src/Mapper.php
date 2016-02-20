@@ -20,6 +20,15 @@ class Mapper
      */
     private $reader;
 
+    private $typeMap = [
+        'Boolean' => ['bool', 'boolean'],
+        'Int' => ['int', 'integer'],
+        'String' => ['string', 'str'],
+        'Array' => ['array', 'list'],
+        'Date' => ['date',  'datetime'],
+        'Float' => ['float']
+    ];
+
     public function __construct(AbstractReader $reader, array $data = [])
     {
         $this->reader = $reader;
@@ -32,6 +41,14 @@ class Mapper
     public function setData(array $data)
     {
         $this->data = $data;
+    }
+
+    /**
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
     }
 
     /**
@@ -78,20 +95,16 @@ class Mapper
      */
     private function createTypeClass(array $config, $rawValue)
     {
-        $aliases = [
-            'Boolean' => ['bool', 'boolean'],
-            'Int' => ['int', 'integer'],
-            'String' => ['string', 'str'],
-            'Array' => ['array', 'list'],
-            'Date' => ['date',  'datetime'],
-            'Float' => ['float']
-        ];
-
         $type = strtolower($config['type']);
         $class = null;
 
-        foreach ($aliases as $typeClass => $list) {
+        foreach ($this->typeMap as $typeClass => $list) {
             if (in_array($type, $list)) {
+                // check registered custom types
+                if (class_exists($typeClass)) {
+                    $class = $typeClass;
+                    continue;
+                }
                 $class = '\Drift\Types\\' . $typeClass . 'Type';
             }
         }
@@ -104,7 +117,9 @@ class Mapper
             ));
         }
 
+        /** @var AbstractType $type */
         $type = new $class($rawValue);
+        $type->setMapper($this);
 
         foreach ($config['options'] as $name => $value) {
             $methodName = 'set' . ucfirst($name);
@@ -120,5 +135,52 @@ class Mapper
         }
 
         return $type;
+    }
+
+    /**
+     * Register a new type class. This class be used to transform the raw
+     * value into something else. The class must implement the TypeInterface.
+     *
+     * @param string $class the full class name that will perform the type
+     * conversion.
+     * @param string $name the name to give the type
+     * @param array ...$names
+     */
+    public function registerType($class, $name, ...$names)
+    {
+        if (!class_exists($class)) {
+            throw new TypeException(sprintf(
+                'Cannot register type, class "%s" does not exist',
+                $class
+            ));
+        }
+
+        // check class implements type interface
+        $interface = 'Drift\Types\TypeInterface';
+        if (!in_array($interface, class_implements($class))) {
+            throw new TypeException(sprintf(
+                'The class "%s" does not implement "%s"',
+                $class,
+                $interface
+            ));
+        }
+
+        $aliases = [];
+        foreach ($this->typeMap as $k => $list) {
+            $aliases = array_merge($aliases, $list);
+        }
+
+        array_unshift($names, $name);
+
+        foreach ($names as $name_) {
+            if (in_array($name_, $aliases)) {
+                throw new TypeException(sprintf(
+                    'The name "%s" is already registered',
+                    $name_
+                ));
+            }
+        }
+
+        $this->typeMap[$class] = $names;
     }
 }

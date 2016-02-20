@@ -28,6 +28,12 @@ class Movie
     private $cast;
 
     /**
+     * @Drift\Strup()
+     * @var string
+     */
+    private $genre;
+
+    /**
      * @Drift\Int()
      * @var int
      */

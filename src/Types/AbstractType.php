@@ -2,9 +2,16 @@
 
 namespace Drift\Types;
 
+use Drift\Mapper;
+
 abstract class AbstractType implements TypeInterface
 {
     private $originalValue;
+
+    /**
+     * @var Mapper
+     */
+    private $mapper;
 
     public function __construct($value)
     {
@@ -23,5 +30,18 @@ abstract class AbstractType implements TypeInterface
             gettype($this->getOriginalValue()),
             $type
         ));
+    }
+
+    public function setMapper(Mapper $mapper)
+    {
+        $this->mapper = $mapper;
+    }
+
+    /**
+     * @return Mapper
+     */
+    protected function getMapper()
+    {
+        return $this->mapper;
     }
 }
