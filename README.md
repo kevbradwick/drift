@@ -32,35 +32,41 @@ class Actor
     
 And you have some data, consumed from an API like this;
 
-    $data = [
-        'name' => 'Arnold Schwarzenegger',
-        'age' => 68,
-        'date_of_birth' => 'July 30, 1947'
-    ]
+```php
+$data = [
+    'name' => 'Arnold Schwarzenegger',
+    'age' => 68,
+    'date_of_birth' => 'July 30, 1947'
+]
+```
     
 And you want to create a new instance of your actor with the data mapped
 correctly to each member variable.
 
 Then you create a configuration file;
 
-    Application\Actor:
-        name:
-            type: string
-        age:
-            type: int
-        dateOfBirth:
-            type: date
-            field: date_of_birth
+```yaml
+Application\Actor:
+    name:
+        type: string
+    age:
+        type: int
+    dateOfBirth:
+        type: date
+        field: date_of_birth
+```
             
 And use the `Drive\Mapper` to instantiate a new class;
 
-    use Drift\Mapper;
-    use Drift\Reader\YamlReader;
-    use Application\Actor;
-    
-    $mapper = new Mapper(new YamlReader('path/to/config.yml'));
-    $mapper->setData($data);
-    
-    $actor = $mapper->instantiate(Actor::class);
+```php
+use Drift\Mapper;
+use Drift\Reader\YamlReader;
+use Application\Actor;
+
+$mapper = new Mapper(new YamlReader('path/to/config.yml'));
+$mapper->setData($data);
+
+$actor = $mapper->instantiate(Actor::class);
+```
 
 Full documentation can be found on the [Wiki](https://github.com/kevbradwick/drift/wiki).
