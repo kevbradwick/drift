@@ -60,3 +60,5 @@ And use the `Drive\Mapper` to instantiate a new class;
     $mapper->setData($data);
     
     $actor = $mapper->instantiate(Actor::class);
+
+Full documentation can be found on the [Wiki](https://github.com/kevbradwick/drift/wiki).
