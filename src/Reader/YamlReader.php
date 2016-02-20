@@ -48,19 +48,13 @@ class YamlReader extends AbstractReader
             ));
         }
 
-        $defaults = [
-            'type' => null,
-            'field' => null,
-            'options' => [],
-        ];
-
         if (!is_array($this->config[$className])) {
             $this->config[$className] = [];
         }
 
         $properties = [];
         foreach ($this->config[$className] as $name => $config) {
-            $properties[$name] = array_replace($defaults, $config);
+            $properties[$name] = array_replace($this->defaults(), $config);
             // if no field name is present then use the name of the key used
             // in the yaml structure
             if (!$properties[$name]['field']) {
