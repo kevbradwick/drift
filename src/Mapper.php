@@ -4,8 +4,6 @@ namespace Drift;
 
 use Drift\Reader\AbstractReader;
 use Drift\Types\AbstractType;
-use Drift\Types\DateType;
-use Drift\Types\StringType;
 use Drift\Types\TypeException;
 
 class Mapper
@@ -19,6 +17,13 @@ class Mapper
      * @var AbstractReader
      */
     private $reader;
+
+    /**
+     * Allow the mapping of values using dot notation.
+     *
+     * @var bool
+     */
+    private $enableDotNotation = false;
 
     private $typeMap = [
         'Boolean' => ['bool', 'boolean'],
@@ -36,11 +41,23 @@ class Mapper
     }
 
     /**
+     * @param bool $enable
+     * @return Mapper
+     */
+    public function enableDotNotation($enable)
+    {
+        $this->enableDotNotation = (bool) $enable;
+        return $this;
+    }
+
+    /**
      * @param array $data
+     * @return Mapper
      */
     public function setData(array $data)
     {
         $this->data = $data;
+        return $this;
     }
 
     /**
@@ -74,18 +91,47 @@ class Mapper
 
             $field = $config['field'] ? $config['field'] : $name;
 
-            if (!isset($this->data[$field])) {
+            // dot notation
+            if ($this->enableDotNotation && preg_match('/\./', $field)) {
+                $originalValue = $this->resolve($field, null);
+            } elseif (!isset($this->data[$field])) {
                 continue;
+            } else {
+                $originalValue = $this->data[$field];
             }
 
-            $originalValue = $this->data[$field];
             $newValue = $this->createTypeClass($config, $originalValue)->getValue();
-
             $property->setAccessible(true);
             $property->setValue($instance, $newValue);
         }
 
         return $instance;
+    }
+
+    /**
+     * Get value from an array using dot notation.
+     *
+     * @param string $path the path to the value e.g. 'foo.bar'
+     * @param mixed $defaultValue
+     * @return mixed
+     */
+    private function resolve($path, $defaultValue)
+    {
+        $current = $this->data;
+        $p = strtok($path, '.');
+
+        while ($p !== false) {
+            if (is_numeric($p)) {
+                $p = (int) $p;
+            }
+            if (!isset($current[$p])) {
+                return $defaultValue;
+            }
+            $current = $current[$p];
+            $p = strtok('.');
+        }
+
+        return $current;
     }
 
     /**

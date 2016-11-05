@@ -84,6 +84,59 @@ class MapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(90, $movie->getDuration());
     }
 
+    public function testNestedDataCanBeMappedWithDotNotation()
+    {
+        $this->reader->expects($this->once())
+            ->method('getProperties')
+            ->willReturn(['duration' => [
+                'field' => 'duration.value',
+                'type' => 'int',
+                'options' => []
+            ]]);
+
+        $this->mapper->enableDotNotation(true)
+            ->setData(['duration' => ['value' => 99]]);
+
+        /** @var Movie $movie */
+        $movie = $this->mapper->instantiate(Movie::class);
+        $this->assertEquals(99, $movie->getDuration());
+    }
+
+    public function testNestedDataCanBeMappedWithDotNotationForArrays()
+    {
+        $this->reader->expects($this->once())
+            ->method('getProperties')
+            ->willReturn(['duration' => [
+                'field' => 'duration.0',
+                'type' => 'int',
+                'options' => []
+            ]]);
+
+        $this->mapper->enableDotNotation(true)
+            ->setData(['duration' => [99]]);
+
+        /** @var Movie $movie */
+        $movie = $this->mapper->instantiate(Movie::class);
+        $this->assertEquals(99, $movie->getDuration());
+    }
+
+    public function testDotNotationIsDisabledByDefault()
+    {
+        $this->reader->expects($this->once())
+            ->method('getProperties')
+            ->willReturn(['duration' => [
+                'field' => 'duration.0',
+                'type' => 'int',
+                'options' => []
+            ]]);
+
+        $this->mapper->setData(['duration' => [99]]);
+
+        /** @var Movie $movie */
+        $movie = $this->mapper->instantiate(Movie::class);
+        $this->assertEquals(120, $movie->getDuration()); // original value
+    }
+
     /**
      * @expectedException \Drift\Types\TypeException
      * @expectedExceptionMessage "foo" is an unknown type specified for field "duration"
