@@ -1,7 +1,6 @@
 {
   "name": "kevbradwick/drift",
   "description": "A lightweight PHP library for mapping data to PHP classes",
-  "version": "1.0.0-dev",
   "type": "library",
   "keywords": ["mapper", "data", "data mapper"],
   "homepage": "https://github.com/kevbradwick/drift",
