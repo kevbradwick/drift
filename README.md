@@ -23,12 +23,12 @@ namespace Application;
 class Actor
 {
     /**
-     * @Drift\String
+     * @Drift\String()
      */
     private $name;
     
     /**
-     * @Drift\Int
+     * @Drift\Int()
      */
     private $age;
     
