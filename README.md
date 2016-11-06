@@ -22,15 +22,24 @@ namespace Application;
 
 class Actor
 {
+    /**
+     * @Drift\String
+     */
     private $name;
     
+    /**
+     * @Drift\Int
+     */
     private $age;
     
+    /**
+     * @Drift\Date(field="date_of_birth")
+     */
     private $dateOfBirth;
 }
 ```
     
-And you have some data, consumed from an API like this;
+And you have some data, possibly consumed from an API, that looks like this;
 
 ```php
 $data = [
@@ -40,33 +49,20 @@ $data = [
 ]
 ```
     
-And you want to create a new instance of your actor with the data mapped
-correctly to each member variable.
-
-Then you create a configuration file;
-
-```yaml
-Application\Actor:
-    name:
-        type: string
-    age:
-        type: int
-    dateOfBirth:
-        type: date
-        field: date_of_birth
-```
-            
-And use the `Drive\Mapper` to instantiate a new class;
+You can then use `Drift\Mapper` to create a new instance of the class,
+initialised with the data.
 
 ```php
 use Drift\Mapper;
-use Drift\Reader\YamlReader;
+use Drift\Reader\AnnotationReader;
 use Application\Actor;
 
-$mapper = new Mapper(new YamlReader('path/to/config.yml'));
+$mapper = new Mapper(new AnnotationReader());
 $mapper->setData($data);
 
 $actor = $mapper->instantiate(Actor::class);
 ```
+
+In addition to annotations, you can specify mapping using Yaml or plain old php.
 
 Full documentation can be found on the [Wiki](https://github.com/kevbradwick/drift/wiki).
